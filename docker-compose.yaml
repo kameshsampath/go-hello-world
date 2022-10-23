@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  go-hello-world:
+    image: "ttl.sh/93500dc3-168c-46e5-b2d6-a689da3d72c7:10m"
+    ports:
+      - "8080:8080"
+networks:
+  go-hello-world:
+  
