@@ -22,10 +22,6 @@ steps:
     privileged: true
     pull: if-not-exists
     settings:
-      registry: ttl.sh
-      repo: ttl.sh/93500dc3-168c-46e5-b2d6-a689da3d72c7
-      tags:
-       - 10m
       platforms:
         - linux/amd64
         - linux/arm64

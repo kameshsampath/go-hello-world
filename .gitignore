@@ -1,2 +1,4 @@
 dist
 .direnv
+.env*
+!.env.example
