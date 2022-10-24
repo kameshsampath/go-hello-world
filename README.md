@@ -1,6 +1,6 @@
 # Hello World
 
-A simple REST API built in `golang` using Labstack's [Echo](https://https://echo.labstack.com/]), to demonstrate how to build multi architecture container images using [Drone CI](https://drone.io) and [Buildx]([https://](https://docs.docker.com/build/buildx/install/)
+A simple REST API built in `golang` using Labstack's [Echo](https://https://echo.labstack.com/]), to demonstrate how to build multi architecture container images using [Drone CI](https://drone.io) and [Buildx](https://docs.docker.com/build/buildx/install/)
 
 ## Pre-requisites
 
