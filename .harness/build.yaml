@@ -1,5 +1,6 @@
 pipeline:
-  name: Build go-hello-world
+  name: build
+  identifier: build
   projectIdentifier: foobar
   orgIdentifier: default
   stages:
