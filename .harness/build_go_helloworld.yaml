@@ -1,0 +1,48 @@
+pipeline:
+  name: build go hello-world
+  identifier: build_go_helloworld
+  projectIdentifier: foobar
+  orgIdentifier: default
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: build and sign
+                  identifier: ko_build_and_sign
+                  spec:
+                    connectorRef: DockerHub
+                    image: kameshsampath/kube-dev-tools:0.1.4
+                    shell: Bash
+                    command: |-
+                      echo -n "$GHCR_TOKEN" | ko auth login ghcr.io -u kameshsampath --password-stdin
+                      IMAGE_REF=$(ko build --bare .)
+                      cosign sign --key env://COSIGN_PRIVATE_KEY "$IMAGE_REF"
+                    envVariables:
+                      KO_DOCKER_REPO: ghcr.io/kameshsampath/go-hello-world
+                      GHCR_TOKEN: <+secrets.getValue("account.Github_Access_Token")>
+                      COSIGN_PASSWORD: <+secrets.getValue("cosign_demo_key_password")>
+                      COSIGN_PRIVATE_KEY: <+secrets.getValue("cosign_demo_priv_key")>
+                      COSIGN_PUBLIC_KEY: <+secrets.getValue("cosign_demo_pub_key")>
+                    imagePullPolicy: IfNotPresent
+                  description: build the application using ko and sign the image using cosign
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+        variables: []
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github
+        repoName: kameshsampath/go-hello-world
+        build: <+input>
+  tags: {}
