@@ -1,7 +1,7 @@
 pipeline:
   name: build go hello-world
   identifier: build_go_helloworld
-  projectIdentifier: foobar
+  projectIdentifier: My_Go_Demos
   orgIdentifier: default
   stages:
     - stage:
