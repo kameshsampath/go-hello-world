@@ -1,0 +1,14 @@
+inputSet:
+  identifier: "default"
+  pipeline:
+    identifier: "build_go_helloworld"
+    properties:
+      ci:
+        codebase:
+          build:
+            type: "branch"
+            spec:
+              branch: "main"
+  name: "default"
+  orgIdentifier: "default"
+  projectIdentifier: "My_Go_Demos"
