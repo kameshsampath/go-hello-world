@@ -14,6 +14,17 @@ pipeline:
             steps:
               - step:
                   type: Run
+                  name: test
+                  identifier: test
+                  spec:
+                    connectorRef: ghcrio
+                    image: docker.io/golang:1.19
+                    shell: Sh
+                    command: go test -timeout 30s -v ./...
+                    imagePullPolicy: IfNotPresent
+                  description: Run go tests
+              - step:
+                  type: Run
                   name: build and sign
                   identifier: ko_build_and_sign
                   spec:
