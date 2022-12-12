@@ -57,3 +57,5 @@ pipeline:
         repoName: kameshsampath/go-hello-world
         build: <+input>
   tags: {}
+  delegateSelectors:
+    - go-demos
