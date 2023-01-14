@@ -70,6 +70,7 @@ steps:
      k3d cluster delete "$K3D_CLUSTER_NAME"
      docker network rm  "$K3D_CLUSTER_NAME"
      rm -f "$DRONE_WORKSPACE/cosign.pub" "$DRONE_WORKSPACE/image-refs.txt"
+     rm -f "$DRONE_WORKSPACE/.kube/*"
   volumes:
   - name: docker-sock
     path: /var/run/docker.sock
