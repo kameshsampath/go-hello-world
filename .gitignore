@@ -2,3 +2,5 @@ dist
 .direnv
 .env*
 !.env.example
+cosign*
+image-refs.txt

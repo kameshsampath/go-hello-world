@@ -1,0 +1,34 @@
+inputSet:
+  identifier: "Default_GitHub"
+  name: "Default GitHub"
+  orgIdentifier: "default"
+  projectIdentifier: "mydemos"
+  pipeline:
+    identifier: "Build_Gitops_Greeter"
+    stages:
+    - stage:
+        identifier: "Build"
+        type: "CI"
+        spec:
+          execution:
+            steps:
+            - step:
+                identifier: "ko_build_and_push"
+                template:
+                  templateInputs:
+                    type: "Run"
+                    spec:
+                      connectorRef: "account.DockerHub"
+                      envVariables:
+                        IMAGE_TAG: "<+trigger.tag>"
+                        KO_DOCKER_REPO: "<+pipeline.stages.Build.variables.image_registry>/<+pipeline.stages.Build.variables.image_registry_username>/gitops-greeter"
+                        IMAGE_REGISTRY: "<+pipeline.stages.Build.variables.image_registry>"
+                        IMAGE_REGISTRY_USERNAME: "<+pipeline.stages.Build.variables.image_registry_username>"
+                        IMAGE_REGISTRY_PASSWORD: "<+pipeline.stages.Build.variables.image_registry_password>"
+    properties:
+      ci:
+        codebase:
+          build:
+            type: "branch"
+            spec:
+              branch: "<+trigger.branch>"

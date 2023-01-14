@@ -1,0 +1,55 @@
+pipeline:
+  name: Build Gitops Greeter
+  identifier: Build_Gitops_Greeter
+  projectIdentifier: mydemos
+  orgIdentifier: default
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  name: ko build and push
+                  identifier: ko_build_and_push
+                  template:
+                    templateRef: account.ko_build_and_push
+                    versionLabel: 0.0.1
+                    templateInputs:
+                      type: Run
+                      spec:
+                        connectorRef: <+input>
+                        envVariables:
+                          IMAGE_TAG: <+input>
+                          KO_DOCKER_REPO: <+input>
+                          IMAGE_REGISTRY: <+input>
+                          IMAGE_REGISTRY_USERNAME: <+input>
+                          IMAGE_REGISTRY_PASSWORD: <+input>
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+        variables:
+          - name: image_registry_password
+            type: Secret
+            description: the container image registry password
+            value: account.Github_Access_Token
+          - name: image_registry_username
+            type: String
+            description: the container image registry user
+            value: kameshsampath
+          - name: image_registry
+            type: String
+            description: the container image registry e.g docker.io, qauy.io
+            value: ghcr.io
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github
+        repoName: kameshsampath/gitops-greeter
+        build: <+input>
