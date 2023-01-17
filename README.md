@@ -89,6 +89,7 @@ Deploy `policy-controller`,
 ```shell
 helm upgrade --install policy-controller \
   -n cosign-system \
+  --wait \
   sigstore/policy-controller
 ```
 

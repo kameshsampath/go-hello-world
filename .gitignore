@@ -4,3 +4,4 @@ dist
 !.env.example
 cosign*
 image-refs.txt
+!/bin/*.sh
