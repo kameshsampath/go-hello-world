@@ -15,6 +15,7 @@ spec:
       containers:
       - name: hello-world
         image: ghcr.io/kameshsampath/go-hello-world
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             memory: "128Mi"
