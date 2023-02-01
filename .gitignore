@@ -2,6 +2,8 @@ dist
 .direnv
 .env*
 !.env.example
-cosign*
 image-refs.txt
-!/bin/*.sh
+cosign.pub
+cosign.key
+.kube
+goreleaser

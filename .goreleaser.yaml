@@ -1,0 +1,35 @@
+project_name: go-hello-world
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - id: go-hello-world
+    asmflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    ldflags:
+      - -s 
+      - -w 
+      - -X main.Version={{.Tag}}
+      - -extldflags "-static"
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+kos:
+  - id: go-hello-world-ko
+    build: go-hello-world
+    bare: true
+    tags:
+    - latest
+    - '{{.Tag}}'
+    platforms:
+    - linux/amd64
+    - linux/arm64
+# since its a demo, setting the release to be draft/pre-release always
+release:
+  mode: append
+  prerelease: auto
+  draft: true
+  replace_existing_draft: true
