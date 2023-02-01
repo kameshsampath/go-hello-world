@@ -1,0 +1,13 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hello-world
+spec:
+  template:
+    spec:
+      serviceAccountName: hello-world
+      containers:
+        - image: docker.io/kameshsampath/go-hello-world
+          env:
+            - name: GREETING_PREFIX 
+              value: "Hello"

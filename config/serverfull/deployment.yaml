@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      serviceAccountName: hello-world
+      containers:
+      - name: hello-world
+        image: docker.io/kameshsampath/go-hello-world
+        resources:
+          limits:
+            memory: "50Mi"
+            cpu: "50m"
+        ports:
+        - containerPort: 8080
+          name: http

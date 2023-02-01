@@ -1,0 +1,26 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv:
+  - .env
+
+tasks:
+  clean:
+    cmds:
+      - git reset --soft HEAD~1
+      - git tag --delete v0.0.100-next
+    silent: true
+    ignore_error: true
+  tag:
+    cmds:
+      - git add .
+      - git commit -a -m "test and check for kos"
+      - git tag -a v0.0.100-next -m "test and check for kos"
+    silent: true
+  release:
+    cmds:
+      - ./goreleaser release --clean --debug
+    deps:
+      - clean
+      - tag
