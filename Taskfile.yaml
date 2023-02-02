@@ -18,9 +18,17 @@ tasks:
       - git commit -a -m "test and check for kos"
       - git tag -a v0.0.100-next -m "test and check for kos"
     silent: true
-  release:
+  test-release:
     cmds:
       - ./goreleaser release --clean --debug
     deps:
       - clean
       - tag
+  release:
+    cmds:
+      - git tag {{.RELEASE_TAG}}
+      - git push --tags
+      - ./goreleaser release --clean
+    vars:
+      RELEASE_TAG:
+        sh: svu next
