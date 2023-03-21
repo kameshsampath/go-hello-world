@@ -3,7 +3,7 @@ stages:
   - push
 
 variables:
-  KO_DOCKER_REPO: "registry.gitlab.com/${GITLAB_USER_NAME}/go-hello-world"
+  KO_DOCKER_REPO: "registry.gitlab.com/${GITLAB_USER_ID}/go-hello-world"
 
 test:
   stage: test
