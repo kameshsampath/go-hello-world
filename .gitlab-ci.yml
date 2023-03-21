@@ -21,6 +21,6 @@ push:
   before_script:
     - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com -u "${GITLAB_USER_ID}" --password-stdin
   script:
-    - ko build --bare --tag "$CI_COMMIT_SHORT_SHA" .
+    - ko build --bare --tags "$CI_COMMIT_SHORT_SHA" .
 
   
