@@ -4,10 +4,10 @@ stages:
   - release
 
 variables:
-  IMAGE_REPO: 
+  IMAGE_REPO:
     description: "The container registry where the built image will be pushed."
     value: "registry.gitlab.com/${GITLAB_USER_LOGIN}/go-hello-world"
-  USE_KO: 
+  USE_KO:
     description: "Whether to use ko for building."
     value: "yes"
 
@@ -34,7 +34,7 @@ ko_build:
   image: docker.io/kameshsampath/kube-dev-tools:0.1.5
   variables:
     KO_DOCKER_REPO:
-     value: "$IMAGE_REPO"
+      value: "$IMAGE_REPO"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | ko auth login registry.gitlab.com -u "$CI_REGISTRY_USER" --password-stdin
   script: |
@@ -45,17 +45,17 @@ ko_build:
 docker_build:
   stage: build
   image:
-    name: docker:stable
+    name: docker:20.10.16-dind
     entrypoint: [""]
   services:
     - docker:20.10.16-dind
   script: |
-    docker buildx build --push  --platform=linux/arm64 \
+    docker buildx build --push --platform=linux/arm64 \
      --platform=linux/amd64 -t $IMAGE_REPO:$CI_COMMIT_SHORT_SHA -f Dockerfile .
   rules:
-    - exists: 
-       - Dockerfile
     - if: $USE_KO == "no"
+      exists:
+        - Dockerfile
 
 release:
   stage: release
@@ -81,4 +81,3 @@ release:
       -e GITLAB_TOKEN \
       -e GITLAB_USER_LOGIN \
       goreleaser/goreleaser release --clean
-  
