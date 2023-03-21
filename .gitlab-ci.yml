@@ -1,10 +1,16 @@
 stages:
   - test
-  # - build
+  - build
   # - push
 
 test:
-  image: golang:1.19
-    name: goreleaser/goreleaser
+  image:
+    name: golang:1.19
   script:
     - go test -v ./...
+
+build:
+  image:
+    name: golang:1.19
+  script:
+    - go build -o server server.go
