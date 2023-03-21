@@ -9,7 +9,7 @@ variables:
     value: "registry.gitlab.com/${GITLAB_USER_LOGIN}/go-hello-world"
   USE_KO:
     description: "Whether to use ko for building."
-    value: "yes"
+    value: "no"
 
 test:
   stage: test
@@ -49,8 +49,18 @@ docker_build:
     entrypoint: [""]
   services:
     - docker:20.10.16-dind
+  variables:
+    DOCKER_REGISTRY: $CI_REGISTRY
+    DOCKER_USERNAME: $CI_REGISTRY_USER
+    DOCKER_PASSWORD: $CI_REGISTRY_PASSWORD
   script: |
-    docker buildx build --push --platform=linux/arm64 \
+    docker run --rm --privileged \
+     -v $PWD:/work \
+     -w /work \
+     -v /var/run/docker.sock:/var/run/docker.sock \
+     -e DOCKER_USERNAME -e DOCKER_PASSWORD -e DOCKER_REGISTRY  \
+     -e GITLAB_TOKEN -e IMAGE_REPO \
+     docker buildx build --push --platform=linux/arm64 \
      --platform=linux/amd64 -t $IMAGE_REPO:$CI_COMMIT_SHORT_SHA -f Dockerfile .
   rules:
     - if: $USE_KO == "no"
@@ -60,7 +70,7 @@ docker_build:
 release:
   stage: release
   services:
-    - docker:dind
+    - docker:20.10.16-dind
   only:
     refs:
       - tags
