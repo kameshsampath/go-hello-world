@@ -1,10 +1,14 @@
 stages:
   - test
-  - build
-  - push
+  - release
 
 variables:
-  KO_DOCKER_REPO: "registry.gitlab.com/${GITLAB_USER_LOGIN}/go-hello-world"
+  IMAGE_REPO: 
+    description: "The container registry where the built image will be pushed."
+    value: "registry.gitlab.com/${GITLAB_USER_LOGIN}/go-hello-world"
+  USE_KO: 
+    description: "Whether to use ko for building."
+    value: "yes"
 
 test:
   stage: test
@@ -14,14 +18,66 @@ test:
   script:
     - go test -v ./...
 
-ko_build:
-  stage: push
+build:
+  stage: build
   image:
-    name: docker.io/kameshsampath/kube-dev-tools:0.1.5
+    name: golang:1.19
     entrypoint: [""]
-  before_script:
-    - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com -u "${GITLAB_USER_LOGIN}" --password-stdin
   script:
-    - ko build --bare --tags "$CI_COMMIT_SHORT_SHA" .
+    - go build -o server server.go
+  rules:
+    - if: $USE_KO == "no"
 
+ko_build:
+  stage: build
+  image: docker.io/kameshsampath/kube-dev-tools:0.1.5
+  variables:
+    KO_DOCKER_REPO:
+     value: "$IMAGE_REPO"
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | ko auth login registry.gitlab.com -u "$CI_REGISTRY_USER" --password-stdin
+  script: |
+    ko build --bare --tags "$CI_COMMIT_SHORT_SHA" .
+  rules:
+    - if: $USE_KO == "yes"
+
+docker_build:
+  stage: build
+  image:
+    name: docker:stable
+    entrypoint: [""]
+  services:
+    - docker:20.10.16-dind
+  script: |
+    docker buildx build --push  --platform=linux/arm64 \
+     --platform=linux/amd64 -t $IMAGE_REPO:$CI_COMMIT_SHORT_SHA -f Dockerfile .
+  rules:
+    - exists: 
+       - Dockerfile
+    - if: $USE_KO == "no"
+
+release:
+  stage: release
+  services:
+    - docker:dind
+  only:
+    refs:
+      - tags
+  image:
+    name: docker:stable
+    entrypoint: [""]
+  variables:
+    DOCKER_REGISTRY: $CI_REGISTRY
+    DOCKER_USERNAME: $CI_REGISTRY_USER
+    DOCKER_PASSWORD: $CI_REGISTRY_PASSWORD
+    GIT_DEPTH: 0
+  script: |
+    docker run --rm --privileged \
+      -v $PWD:/go/src/gitlab.com/$GITLAB_USER_LOGIN/go-hello-world \
+      -w /go/src/gitlab.com/$GITLAB_USER_LOGIN/go-hello-world \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -e DOCKER_USERNAME -e DOCKER_PASSWORD -e DOCKER_REGISTRY  \
+      -e GITLAB_TOKEN \
+      -e GITLAB_USER_LOGIN \
+      goreleaser/goreleaser release --clean
   
