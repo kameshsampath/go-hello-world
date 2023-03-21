@@ -23,11 +23,10 @@ go-build:
   stage: build
   image:
     name: golang:1.19
-    entrypoint: [""]
   before_script:
-    - go install github.com/goreleaser/goreleaser@latest
+    - curl -sfL https://goreleaser.com/static/run | bash
   script:
-    - goreleaser build
+    - goreleaser build --clean --snapshot
   artifacts:
     paths:
       - dist
