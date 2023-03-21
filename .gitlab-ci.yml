@@ -11,7 +11,7 @@ variables:
     description: "Whether to use ko for building."
     value: "no"
 
-test:
+go-test:
   stage: test
   image:
     name: golang:1.19
@@ -19,7 +19,7 @@ test:
   script:
     - go test -v ./...
 
-build:
+go-build:
   stage: build
   image:
     name: golang:1.19
@@ -29,7 +29,7 @@ build:
   rules:
     - if: $USE_KO == "no"
 
-ko_build:
+ko-build:
   stage: build
   image: docker.io/kameshsampath/kube-dev-tools:0.1.5
   variables:
@@ -42,11 +42,11 @@ ko_build:
   rules:
     - if: $USE_KO == "yes"
 
-docker_build:
+docker-build:
   stage: build
-  image:
-    name: docker:20.10.23
-    entrypoint: [""]
+  needs:
+    - go-build
+  image: docker:20.10.23
   services:
     - docker:20.10.23-dind
   variables:
@@ -67,7 +67,7 @@ docker_build:
 release:
   stage: release
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.23-dind
   only:
     refs:
       - tags
