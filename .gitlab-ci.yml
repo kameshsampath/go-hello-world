@@ -1,16 +1,24 @@
 stages:
   - test
-  - build
-  # - push
+  - push
+
+variables:
+  KO_DOCKER_REPO: "registry.gitlab.com/${GITLAB_USER_NAME}/go-hello-world"
 
 test:
   image:
     name: golang:1.19
+    entrypoint: [""]
   script:
     - go test -v ./...
 
-build:
+push:
   image:
-    name: golang:1.19
+    name: cgr.dev/chainguard/ko
+    entrypoint: [""]
+  before_script:
+    - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com ${GITLAB_USER_NAME} --password-stdin
   script:
-    - go build -o server server.go
+    - ko build --bare --tag "$CI_COMMIT_SHORT_SHA" .
+
+  
