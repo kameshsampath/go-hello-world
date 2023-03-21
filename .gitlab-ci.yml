@@ -24,11 +24,12 @@ go-build:
   image:
     name: golang:1.19
     entrypoint: [""]
-  before_script:
-    - curl -sfL https://goreleaser.com/static/run | bash
-  script:
-    - |
-      goreleaser build --snapshot --clean
+  variables:
+    KO_DOCKER_REPO:
+      value: "$IMAGE_REPO"
+  script: |
+    curl -sfL https://goreleaser.com/static/run |\
+      VERSION=v1.16.2 DISTRIBUTION=oss bash -s -- build --clean --snapshot
   artifacts:
     paths:
       - dist
