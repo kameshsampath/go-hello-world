@@ -45,23 +45,20 @@ ko_build:
 docker_build:
   stage: build
   image:
-    name: docker:20.10.16-dind
+    name: docker:20.10.23
     entrypoint: [""]
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.23-dind
   variables:
+    BUILDER_NAME: "buildx-multi-arch"
     DOCKER_REGISTRY: $CI_REGISTRY
     DOCKER_USERNAME: $CI_REGISTRY_USER
     DOCKER_PASSWORD: $CI_REGISTRY_PASSWORD
-  script: |
-    docker run --rm --privileged \
-     -v $PWD:/work \
-     -w /work \
-     -v /var/run/docker.sock:/var/run/docker.sock \
-     -e DOCKER_USERNAME -e DOCKER_PASSWORD -e DOCKER_REGISTRY  \
-     -e GITLAB_TOKEN -e IMAGE_REPO \
-     docker buildx build --push --platform=linux/arm64 \
-     --platform=linux/amd64 -t $IMAGE_REPO:$CI_COMMIT_SHORT_SHA -f Dockerfile .
+  before_script:
+    - echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY -u $DOCKER_USERNAME --password-stdin
+  script:
+    - docker buildx inspect $BUILDER_NAME || docker buildx create --name=$BUILDER_NAME --driver=docker-container --driver-opt=network=host
+    - docker buildx build --builder=$BUILDER_NAME --push --platform=linux/arm64 --platform=linux/amd64 -t $IMAGE_REPO:$CI_COMMIT_SHORT_SHA -f Dockerfile .
   rules:
     - if: $USE_KO == "no"
       exists:
