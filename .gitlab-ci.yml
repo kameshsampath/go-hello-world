@@ -9,7 +9,7 @@ variables:
     value: "registry.gitlab.com/${GITLAB_USER_LOGIN}/go-hello-world"
   USE_KO:
     description: "Whether to use ko for building."
-    value: "no"
+    value: "yes"
 
 go-test:
   stage: test
@@ -45,7 +45,7 @@ ko-build:
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | ko auth login registry.gitlab.com -u "$CI_REGISTRY_USER" --password-stdin
   script: |
-    ko build --bare --tags "$CI_COMMIT_SHORT_SHA" .
+    ko build --bare --platform=linux/amd64 --platform=linux/arm64 --tags "$CI_COMMIT_SHORT_SHA" .
   rules:
     - if: $USE_KO == "yes"
 
