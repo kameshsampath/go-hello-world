@@ -4,7 +4,7 @@ stages:
   - push
 
 variables:
-  KO_DOCKER_REPO: "registry.gitlab.com/${GITLAB_USER_ID}/go-hello-world"
+  KO_DOCKER_REPO: "registry.gitlab.com/${GITLAB_USER_LOGIN}/go-hello-world"
 
 test:
   stage: test
@@ -20,7 +20,7 @@ ko_build:
     name: docker.io/kameshsampath/kube-dev-tools:0.1.5
     entrypoint: [""]
   before_script:
-    - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com -u "${GITLAB_USER_ID}" --password-stdin
+    - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com -u "${GITLAB_USER_LOGIN}" --password-stdin
   script:
     - ko build --bare --tags "$CI_COMMIT_SHORT_SHA" .
 
