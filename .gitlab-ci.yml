@@ -1,5 +1,6 @@
 stages:
   - test
+  - build
   - push
 
 variables:
@@ -9,14 +10,16 @@ test:
   stage: test
   image:
     name: golang:1.19
+    pull_policy: if-not-present
     entrypoint: [""]
   script:
     - go test -v ./...
 
-push:
+ko_build:
   stage: push
   image:
-    name: cgr.dev/chainguard/ko
+    name: docker.io/kameshsampath/kube-dev-tools:0.1.5
+    pull_policy: if-not-present
     entrypoint: [""]
   before_script:
     - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com -u "${GITLAB_USER_ID}" --password-stdin
