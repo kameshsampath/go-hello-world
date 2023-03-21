@@ -17,7 +17,7 @@ push:
     name: cgr.dev/chainguard/ko
     entrypoint: [""]
   before_script:
-    - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com ${GITLAB_USER_NAME} --password-stdin
+    - echo "$CI_JOB_TOKEN" | ko auth login registry.gitlab.com -u ${GITLAB_USER_NAME} --password-stdin
   script:
     - ko build --bare --tag "$CI_COMMIT_SHORT_SHA" .
 
