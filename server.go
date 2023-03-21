@@ -32,6 +32,9 @@ func sayHello(c echo.Context) error {
 
 	err = c.Bind(&greeting)
 	if err != nil {
+		return err
+	}
+	if greeting.Name == "" {
 		greeting.Name = "Anonymous"
 	}
 
